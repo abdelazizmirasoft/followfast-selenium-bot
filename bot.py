@@ -32,25 +32,32 @@ def loadDriver():
 
 
 def login(driver):
-    # 4: Username
+    # 1: Username
     driver.find_element_by_name('username').send_keys(username)
-    # open_select_ministry = driver.find_element_by_xpath(
-    #     '//center/table/tbody/tr/td[1]/div/div[2]/div/div/table/tbody/tr/').send_keys("Adm1nRNC$2015")
-
-    # 5: Password
+    # 2: Password
     driver.find_element_by_name('pass').send_keys(password)
-    # open_select_ministry = driver.find_element_by_xpath(
-    #     '//tbody/tr[8]/td[1]/input').send_keys("Adm1nRNC$2015")
-    time.sleep(3)
-    # 6: Submit button
+    # Some time to type the captcha
+    time.sleep(5)
+    # 3: Submit button
     driver.find_element_by_name('login').click()
+
+
+def doFbSubs():
+    global driver
+    driver.find_element_by_css_selector("a[href*='fbsubs.php'] ").click()
+
+
+def doTasks():
+    time.sleep(10)
+    doFbSubs()
 
 
 if __name__ == "__main__":
     try:
         driver = loadDriver()
         login(driver)
-        time.sleep(10)
+        while True:
+            doTasks()
 
     except:
         print("Re-try")
