@@ -26,6 +26,7 @@ def loadDriver():
 
 
 def login(driver):
+
     # 1: Username
     driver.find_element_by_name('username').send_keys(username)
     # 2: Password
@@ -34,6 +35,8 @@ def login(driver):
     time.sleep(5)
     # 3: Submit button
     driver.find_element_by_name('login').click()
+    # Login to Twitter
+    driver.execute_script("window.open('');")
 
 
 # This function is to close all tabs other than 0 from 1 to n
@@ -46,6 +49,15 @@ def closeTabs(n):
         driver.close()
     # Switch back to the main tab
     window_name = driver.window_handles[0]
+    driver.switch_to.window(window_name=window_name)
+
+# This function is to move to the tab n
+
+
+def moveToTab(n):
+    global driver
+    # Switch back to the main tab
+    window_name = driver.window_handles[n]
     driver.switch_to.window(window_name=window_name)
 
 
@@ -95,6 +107,30 @@ def doInstaLikes():
 def doTwitterTweet():
     global driver
     driver.find_element_by_css_selector("a[href*='tweet.php'] ").click()
+    foundButton = True
+    while foundButton:
+        try:
+            element = driver.find_element_by_css_selector(
+                "div.likebox0")
+            attributeValue = element.get_attribute("style")
+            if "img/xlike-50" in attributeValue:
+                driver.find_element_by_xpath("//input[@value='Tweet']").click()
+                driver.find_element_by_xpath("//input[@value='Tweet']").click()
+                print("We move to 1")
+                moveToTab(1)
+                print("We stope 1")
+                driver.execute_script("window.stop();")
+                print("We move to 2")
+                moveToTab(2)
+                print("We sleep")
+                time.sleep(randint(5, 10))
+                closeTabs(2)
+                time.sleep(randint(5, 15))
+            else:
+                foundButton = False
+        except:
+            print("No Tweet button found")
+            foundButton = False
     time.sleep(randint(10, 20))
 
 
@@ -111,8 +147,8 @@ def doTwitterRetweet():
 
 
 def doTasks():
-    doFbSubs()
-    doInstaLikes()
+    # doFbSubs()
+    # doInstaLikes()
     doTwitterTweet()
     # doTwitterLikes()
     # doTwitterRetweet()
