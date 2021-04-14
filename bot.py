@@ -6,6 +6,7 @@ import re
 import math
 import io
 import datetime
+from random import randint
 from selenium.webdriver.chrome.options import Options
 
 username = ""
@@ -17,13 +18,6 @@ def loadDriver():
     # To ignore the check of the SSL Certificate
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
-    # To download automatically files
-    options.add_experimental_option("prefs", {
-        "download.default_directory": r"c:\XML",
-        "download.prompt_for_download": False,
-        "download.directory_upgrade": True,
-        "safebrowsing.enabled": True
-    })
     driver = webdriver.Chrome(executable_path=ChromeDriverManager(
     ).install(), options=options)
 
@@ -42,14 +36,87 @@ def login(driver):
     driver.find_element_by_name('login').click()
 
 
+# This function is to close all tabs other than 0 from 1 to n
+def closeTabs(n):
+    global driver
+    # Loop tabs
+    for i in range(1, n+1):
+        window_name = driver.window_handles[i]
+        driver.switch_to.window(window_name=window_name)
+        driver.close()
+    # Switch back to the main tab
+    window_name = driver.window_handles[0]
+    driver.switch_to.window(window_name=window_name)
+
+
 def doFbSubs():
     global driver
     driver.find_element_by_css_selector("a[href*='fbsubs.php'] ").click()
+    # Switch to Fb Subs page
+
+    foundButton = True
+    while foundButton:
+        try:
+            followBtn = driver.find_element_by_xpath(
+                "//input[@value='Follow']")
+            followBtn.click()
+            print("Clicked")
+            time.sleep(randint(2, 4))
+            closeTabs(1)
+            time.sleep(randint(1, 3))
+        except:
+            print("No Follow button found")
+            foundButton = False
+    time.sleep(randint(10, 20))
+
+
+def doInstaLikes():
+    global driver
+    driver.find_element_by_css_selector("a[href*='instb.php'] ").click()
+    foundButton = True
+    while foundButton:
+        try:
+            element = driver.find_element_by_css_selector(
+                "div.likebox0")
+            attributeValue = element.get_attribute("style")
+            if "img/xlike-50" in attributeValue:
+                driver.find_element_by_xpath("//input[@value='Like']").click()
+                time.sleep(randint(5, 10))
+                closeTabs(1)
+                time.sleep(randint(5, 15))
+            else:
+                foundButton = False
+        except:
+            print("No Insta button found")
+            foundButton = False
+    time.sleep(randint(10, 20))
+
+
+def doTwitterTweet():
+    global driver
+    driver.find_element_by_css_selector("a[href*='tweet.php'] ").click()
+    time.sleep(randint(10, 20))
+
+
+def doTwitterLikes():
+    global driver
+    driver.find_element_by_css_selector("a[href*='twlike.php'] ").click()
+    time.sleep(randint(10, 20))
+
+
+def doTwitterRetweet():
+    global driver
+    driver.find_element_by_css_selector("a[href*='retweet.php'] ").click()
+    time.sleep(randint(10, 20))
 
 
 def doTasks():
-    time.sleep(10)
     doFbSubs()
+    doInstaLikes()
+    doTwitterTweet()
+    # doTwitterLikes()
+    # doTwitterRetweet()
+    time.sleep(randint(720, 1020))
 
 
 if __name__ == "__main__":
@@ -58,6 +125,15 @@ if __name__ == "__main__":
         login(driver)
         while True:
             doTasks()
+            # Sleep for a while to avoid bot behaviour detection
+            if dt.time() > datetime.time(23):
+                print("Time to sleep: 16.2 hours")
+                time.sleep(60*60*9.2)
+                print("We continue")
+            elif dt.time() >= datetime.time(12) and dt.time() < datetime.time(13):
+                print("Time to sleep: 1.3 hours")
+                time.sleep(60*60*1.3)
+                print("We continue")
 
     except:
         print("Re-try")
