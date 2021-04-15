@@ -12,6 +12,9 @@ from selenium.webdriver.chrome.options import Options
 username = ""
 password = ""
 
+twitterUser = ""
+twitterPwd = ""
+
 
 def loadDriver():
     options = webdriver.ChromeOptions()
@@ -23,20 +26,6 @@ def loadDriver():
 
     driver.get('https://followfast.com/login.php')
     return driver
-
-
-def login(driver):
-
-    # 1: Username
-    driver.find_element_by_name('username').send_keys(username)
-    # 2: Password
-    driver.find_element_by_name('pass').send_keys(password)
-    # Some time to type the captcha
-    time.sleep(5)
-    # 3: Submit button
-    driver.find_element_by_name('login').click()
-    # Login to Twitter
-    driver.execute_script("window.open('');")
 
 
 # This function is to close all tabs other than 0 from 1 to n
@@ -61,6 +50,55 @@ def moveToTab(n):
     driver.switch_to.window(window_name=window_name)
 
 
+# Login to Twitter
+def loginTwitter():
+    global driver
+    print('Twitter')
+    # Open a new window
+    driver.execute_script("window.open('');")
+    moveToTab(1)
+    driver.get('https://twitter.com/login')
+    driver.implicitly_wait(2)
+    try:
+        # 1: Username
+        print('Username')
+        driver.find_element_by_name(
+            "session[username_or_email]").send_keys(twitterUser)
+        driver.implicitly_wait(2)
+        # 2: Password
+        driver.find_element_by_name("session[password]").send_keys(twitterPwd)
+        # 3: Submit button
+        driver.find_element_by_xpath(
+            "//div[@role='button']").click()
+        time.sleep(randint(15, 30))
+    except:
+        """ Twitter not loaded or already logged in!"""
+    closeTabs(1)
+
+
+# Login to Followfast
+def loginFollowfast():
+    global driver
+    # 1: Username
+    driver.find_element_by_name(
+        'username').send_keys(username)
+    # 2: Password
+    driver.find_element_by_name('pass').send_keys(password)
+    # Some time to type the captcha
+    time.sleep(5)
+    # 3: Submit button
+    driver.find_element_by_name('login').click()
+
+
+# Global login
+def login(driver):
+    # MUST: Login to the main website
+    loginFollowfast()
+    # MUST: Login to twitter
+    loginTwitter()
+
+
+# Get points from Fb subscribtions
 def doFbSubs():
     global driver
     driver.find_element_by_css_selector("a[href*='fbsubs.php'] ").click()
@@ -116,12 +154,12 @@ def doTwitterTweet():
             if "img/xlike-50" in attributeValue:
                 driver.find_element_by_xpath("//input[@value='Tweet']").click()
                 driver.find_element_by_xpath("//input[@value='Tweet']").click()
-                print("We move to 1")
-                moveToTab(1)
-                print("We stope 1")
-                driver.execute_script("window.stop();")
                 print("We move to 2")
                 moveToTab(2)
+                print("We stope 2")
+                driver.execute_script("window.stop();")
+                print("We move to 1")
+                moveToTab(1)
                 print("We sleep")
                 time.sleep(randint(5, 10))
                 closeTabs(2)
@@ -174,3 +212,17 @@ if __name__ == "__main__":
     except:
         print("Re-try")
         driver.quit()
+
+    # driver = loadDriver()
+    # login(driver)
+    # while True:
+    #     doTasks()
+    #     # Sleep for a while to avoid bot behaviour detection
+    #     if dt.time() > datetime.time(23):
+    #         print("Time to sleep: 16.2 hours")
+    #         time.sleep(60*60*9.2)
+    #         print("We continue")
+    #     elif dt.time() >= datetime.time(12) and dt.time() < datetime.time(13):
+    #         print("Time to sleep: 1.3 hours")
+    #         time.sleep(60*60*1.3)
+    #         print("We continue")
