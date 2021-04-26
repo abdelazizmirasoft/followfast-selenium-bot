@@ -1,6 +1,7 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.keys import Keys
 import time
 import re
 import math
@@ -23,7 +24,6 @@ def loadDriver():
     options.add_argument('--ignore-ssl-errors')
     driver = webdriver.Chrome(executable_path=ChromeDriverManager(
     ).install(), options=options)
-
     driver.get('https://followfast.com/login.php')
     return driver
 
@@ -58,19 +58,21 @@ def loginTwitter():
     driver.execute_script("window.open('');")
     moveToTab(1)
     driver.get('https://twitter.com/login')
-    driver.implicitly_wait(2)
+    # driver.implicitly_wait(2)
+    time.sleep(5)
     try:
         # 1: Username
         print('Username')
         driver.find_element_by_name(
             "session[username_or_email]").send_keys(twitterUser)
-        driver.implicitly_wait(2)
+        # driver.implicitly_wait(2)
         # 2: Password
+        print('Password')
         driver.find_element_by_name("session[password]").send_keys(twitterPwd)
         # 3: Submit button
         driver.find_element_by_xpath(
             "//div[@role='button']").click()
-        time.sleep(randint(15, 30))
+        time.sleep(randint(5, 10))
     except:
         """ Twitter not loaded or already logged in!"""
     closeTabs(1)
@@ -145,30 +147,53 @@ def doInstaLikes():
 def doTwitterTweet():
     global driver
     driver.find_element_by_css_selector("a[href*='tweet.php'] ").click()
+    time.sleep(5)
     foundButton = True
     while foundButton:
         try:
             element = driver.find_element_by_css_selector(
                 "div.likebox0")
             attributeValue = element.get_attribute("style")
-            if "img/xlike-50" in attributeValue:
+            # This value may change from time to time so you should update
+            if "50.jpg" in attributeValue:
+                webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
                 driver.find_element_by_xpath("//input[@value='Tweet']").click()
+                time.sleep(1)
+                moveToTab(0)
+                time.sleep(2)
                 driver.find_element_by_xpath("//input[@value='Tweet']").click()
-                print("We move to 2")
-                moveToTab(2)
-                print("We stope 2")
-                driver.execute_script("window.stop();")
-                print("We move to 1")
+                # print("We switch to the last opened tab")
+                moveToTab(-1)
+                # print("set_page_load_timeout")
+                driver.set_page_load_timeout(0.001)
+                time.sleep(0.1)
+                # print("Kill last click")
+                try:
+                    webdriver.ActionChains(driver).send_keys(
+                        Keys.ESCAPE).perform()
+                except:
+                    """Do nothing"""
+                time.sleep(1)
+                # print("We switch to the tweet page")
                 moveToTab(1)
-                print("We sleep")
-                time.sleep(randint(5, 10))
-                closeTabs(2)
-                time.sleep(randint(5, 15))
+                time.sleep(5)
+                # print("We switch to main page")
+                moveToTab(0)
+                time.sleep(1)
+                # print("We close the tweet page")
+                closeTabs(1)
+                time.sleep(1)
+                # print("We switch to main page")
+                moveToTab(0)
+                time.sleep(1)
+                closeTabs(1)
+                break
             else:
                 foundButton = False
         except:
             print("No Tweet button found")
             foundButton = False
+    print("We sleep randint(10, 20)")
     time.sleep(randint(10, 20))
 
 
@@ -196,6 +221,7 @@ def doTasks():
 if __name__ == "__main__":
     try:
         driver = loadDriver()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
         login(driver)
         while True:
             doTasks()
