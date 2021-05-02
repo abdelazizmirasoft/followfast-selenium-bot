@@ -115,7 +115,7 @@ def login(driver):
 # Get points from Fb subscribtions
 def doFbSubs():
     global driver
-    driver.find_element_by_css_selector("a[href*='fbsubs.php'] ").click()
+    driver.get('https://followfast.com/fbsubs.php')
     # Switch to Fb Subs page
 
     foundButton = True
@@ -136,7 +136,7 @@ def doFbSubs():
 
 def doInstaLikes():
     global driver
-    driver.find_element_by_css_selector("a[href*='instb.php'] ").click()
+    driver.get('https://followfast.com/instb.php')
     foundButton = True
     index = 0
     while foundButton and index < 20:
@@ -198,7 +198,7 @@ def twitterWorkFlow(TweetOrLoveOrRetwt):
 
 def doTwitter():
     global driver
-    driver.find_element_by_css_selector("a[href*='tweet.php'] ").click()
+    driver.get('https://followfast.com/tweet.php')
     time.sleep(5)
     foundButton = True
     index = 0
