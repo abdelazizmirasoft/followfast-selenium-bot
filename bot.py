@@ -27,6 +27,7 @@ def loadDriver():
     # To ignore the check of the SSL Certificate
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
+    # Full screen display
     options.add_argument("start-maximized")
     # start chrome without showing the browser
     # options.add_argument('headless')
@@ -126,7 +127,7 @@ def doFbSubs():
             print("Clicked")
             time.sleep(randint(2, 4))
             closeTabs(1)
-            time.sleep(randint(1, 3))
+            time.sleep(randint(3, 5))
         except:
             print("No Follow button found")
             foundButton = False
@@ -147,7 +148,7 @@ def doInstaLikes():
                 driver.find_element_by_xpath("//input[@value='Like']").click()
                 time.sleep(randint(5, 10))
                 closeTabs(1)
-                time.sleep(randint(5, 15))
+                time.sleep(randint(15, 25))
                 index += 1
             else:
                 foundButton = False
@@ -254,7 +255,10 @@ def doTwitterRetweet():
 
 
 def doTasks():
+    global driver
     for i in range(3):
+        driver.refresh()
+        time.sleep(3.5)
         doFbSubs()
         doInstaLikes()
         doTwitter()
