@@ -161,11 +161,13 @@ def doInstaLikes():
 def twitterWorkFlow(TweetOrLoveOrRetwt):
     global driver
     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    driver.find_element_by_xpath("//input[@value='Tweet']").click()
+    driver.find_element_by_xpath(
+        "//input[@value='"+TweetOrLoveOrRetwt+"']").click()
     time.sleep(1)
     moveToTab(0)
     time.sleep(2)
-    driver.find_element_by_xpath("//input[@value='Tweet']").click()
+    driver.find_element_by_xpath(
+        "//input[@value='"+TweetOrLoveOrRetwt+"']").click()
     # print("We switch to the last opened tab")
     moveToTab(-1)
     # print("set_page_load_timeout")
@@ -176,13 +178,18 @@ def twitterWorkFlow(TweetOrLoveOrRetwt):
         webdriver.ActionChains(driver).send_keys(
             Keys.ESCAPE).perform()
     except:
-        """Do nothing"""
+        pass
     time.sleep(1)
     # print("We switch to the tweet page")
     moveToTab(1)
     # Do Tweets
     time.sleep(5)
-    doTwitterTweet()
+    if TweetOrLoveOrRetwt == "Tweet":
+        doTwitterTweet()
+    elif TweetOrLoveOrRetwt == "Love":
+        doTwitterLike()
+    else:
+        doTwitterRetweet()
     time.sleep(3)
     # print("We switch to main page")
     moveToTab(0)
@@ -196,9 +203,15 @@ def twitterWorkFlow(TweetOrLoveOrRetwt):
     closeTabs(1)
 
 
-def doTwitter():
+def doTwitter(TweetOrLoveOrRetwt):
     global driver
-    driver.get('https://followfast.com/tweet.php')
+    # driver.get('https://followfast.com/tweet.php')
+    if TweetOrLoveOrRetwt == "Tweet":
+        driver.get('https://followfast.com/tweet.php')
+    elif TweetOrLoveOrRetwt == "Love":
+        driver.get('https://followfast.com/twlike.php')
+    else:
+        driver.get('https://followfast.com/retweet.php')
     time.sleep(5)
     foundButton = True
     index = 0
@@ -209,7 +222,7 @@ def doTwitter():
             attributeValue = element.get_attribute("style")
             # This value may change from time to time so you should update
             if "50.jpg" in attributeValue:
-                twitterWorkFlow("Tweet")
+                twitterWorkFlow(TweetOrLoveOrRetwt)
                 index += 1
                 time.sleep(randint(5, 10))
             else:
@@ -244,8 +257,16 @@ def doTwitterTweet():
 
 def doTwitterLikes():
     global driver
-    driver.find_element_by_css_selector("a[href*='twlike.php'] ").click()
-    time.sleep(randint(10, 20))
+    driver.set_page_load_timeout(30)
+
+    time.sleep(0.5)
+    print("Click Love button")
+    try:
+        driver.find_element_by_xpath(
+            "//div[@role='button'][@data-testid='like'][@tabindex='0']").click()
+        # webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
+    except Exception as e:
+        print(e)
 
 
 def doTwitterRetweet():
@@ -261,7 +282,9 @@ def doTasks():
         time.sleep(3.5)
         doFbSubs()
         doInstaLikes()
-        doTwitter()
+        doTwitter("Tweet")
+        # doTwitter("Love")
+        # doTwitter("Retwt")
         # doTwitterLikes()
         # doTwitterRetweet()
     sleepingTime = randint(720, 1020)
