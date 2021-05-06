@@ -31,6 +31,7 @@ def loadDriver():
     # options.add_argument("start-maximized")
     # start chrome without showing the browser
     # options.add_argument('headless')
+    # options.add_experimental_option('excludeSwitches', ['enable-logging'])
     # END start chrome without showing the browser
     driver = webdriver.Chrome(executable_path=ChromeDriverManager(
     ).install(), options=options)
@@ -236,14 +237,14 @@ def doTwitter(TweetOrLoveOrRetwt):
 def doTwitterTweet():
     global driver
     driver.set_page_load_timeout(30)
-    print("Set random to avoid twitter existing post warning ")
+    # print("Set random to avoid twitter existing post warning ")
     try:
         span = driver.find_element_by_xpath(
             "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[3]/div/div/div/div[1]/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div/div/div/div/div/span[2]/span")
         driver.execute_script(
             "arguments[0].innerText = '"+str(randint(100, 900))+"'", span)
     except:
-        """ DO NOTHING """
+        pass
     time.sleep(0.5)
     print("Click Tweet button")
     try:
@@ -257,9 +258,7 @@ def doTwitterTweet():
 def doTwitterLikes():
     global driver
     driver.set_page_load_timeout(30)
-
     time.sleep(0.5)
-    print("Click Love button")
     try:
         driver.find_element_by_xpath(
             "//div[@role='button'][@data-testid='like'][@tabindex='0']").click()
@@ -269,8 +268,16 @@ def doTwitterLikes():
 
 def doTwitterRetweet():
     global driver
-    driver.find_element_by_css_selector("a[href*='retweet.php'] ").click()
-    time.sleep(randint(10, 20))
+    driver.set_page_load_timeout(30)
+    time.sleep(0.5)
+    try:
+        driver.find_element_by_xpath(
+            "//div[@role='button'][@data-testid='retweet'][@tabindex='0']").click()
+        time.sleep(0.5)
+        driver.find_element_by_xpath(
+            "//div[@role='menuitem'][@data-testid='retweetConfirm'][@tabindex='0']").click()
+    except Exception as e:
+        print(e)
 
 
 def doTasks():
@@ -282,9 +289,7 @@ def doTasks():
         doInstaLikes()
         doTwitter("Tweet")
         doTwitter("Love")
-        # doTwitter("Retwt")
-        # doTwitterLikes()
-        # doTwitterRetweet()
+        doTwitter("Retwt")
     sleepingTime = randint(720, 1020)
     print("sleepingTime: "+str(sleepingTime/60))
     time.sleep(sleepingTime)
