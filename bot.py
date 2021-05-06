@@ -204,7 +204,7 @@ def twitterWorkFlow(TweetOrLoveOrRetwt):
 
 
 def doTwitter(TweetOrLoveOrRetwt):
-    global driver
+    global driver, toSkip
     # driver.get('https://followfast.com/tweet.php')
     if TweetOrLoveOrRetwt == "Tweet":
         driver.get('https://followfast.com/tweet.php')
@@ -223,6 +223,11 @@ def doTwitter(TweetOrLoveOrRetwt):
             # This value may change from time to time so you should update
             if "50.jpg" in attributeValue:
                 twitterWorkFlow(TweetOrLoveOrRetwt)
+                # Skip innexisting/already processed Pages
+                if toSkip:
+                    driver.find_element_by_xpath(
+                        "/html/body/center/table/tbody/tr/td[2]/div/div[5]/div[4]/div[1]/table/tbody/tr[4]/td[1]/a").click()
+                    toSkip = False
                 index += 1
                 time.sleep(randint(5, 10))
             else:
@@ -256,18 +261,23 @@ def doTwitterTweet():
 
 
 def doTwitterLikes():
-    global driver
+    global driver, toSkip
     driver.set_page_load_timeout(30)
     time.sleep(0.5)
     try:
         driver.find_element_by_xpath(
             "//div[@role='button'][@data-testid='like'][@tabindex='0']").click()
     except Exception as e:
-        print(e)
+        try:
+            driver.find_element_by_xpath(
+                "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/section/div/div/div[2]/div/div/article/div/div/div/div[3]/div[6]/div[3]/div/div/div").click()
+        except Exception as e:
+            toSkip = True
+            print(e)
 
 
 def doTwitterRetweet():
-    global driver
+    global driver, toSkip
     driver.set_page_load_timeout(30)
     time.sleep(0.5)
     try:
@@ -277,6 +287,7 @@ def doTwitterRetweet():
         driver.find_element_by_xpath(
             "//div[@role='menuitem'][@data-testid='retweetConfirm'][@tabindex='0']").click()
     except Exception as e:
+        toSkip = True
         print(e)
 
 
@@ -298,6 +309,7 @@ def doTasks():
 if __name__ == "__main__":
     try:
         driver = loadDriver()
+        toSkip = False
         login(driver)
         while True:
             try:
