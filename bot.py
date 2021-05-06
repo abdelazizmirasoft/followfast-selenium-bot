@@ -28,10 +28,9 @@ def loadDriver():
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
     # Full screen display
-    options.add_argument("start-maximized")
+    # options.add_argument("start-maximized")
     # start chrome without showing the browser
     # options.add_argument('headless')
-    # options.add_experimental_option('excludeSwitches', ['enable-logging'])
     # END start chrome without showing the browser
     driver = webdriver.Chrome(executable_path=ChromeDriverManager(
     ).install(), options=options)
@@ -187,7 +186,7 @@ def twitterWorkFlow(TweetOrLoveOrRetwt):
     if TweetOrLoveOrRetwt == "Tweet":
         doTwitterTweet()
     elif TweetOrLoveOrRetwt == "Love":
-        doTwitterLike()
+        doTwitterLikes()
     else:
         doTwitterRetweet()
     time.sleep(3)
@@ -264,7 +263,6 @@ def doTwitterLikes():
     try:
         driver.find_element_by_xpath(
             "//div[@role='button'][@data-testid='like'][@tabindex='0']").click()
-        # webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
     except Exception as e:
         print(e)
 
@@ -280,10 +278,10 @@ def doTasks():
     for i in range(3):
         driver.refresh()
         time.sleep(3.5)
-        doFbSubs()
-        doInstaLikes()
-        doTwitter("Tweet")
-        # doTwitter("Love")
+        # doFbSubs()
+        # doInstaLikes()
+        # doTwitter("Tweet")
+        doTwitter("Love")
         # doTwitter("Retwt")
         # doTwitterLikes()
         # doTwitterRetweet()
