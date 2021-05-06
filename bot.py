@@ -278,9 +278,9 @@ def doTasks():
     for i in range(3):
         driver.refresh()
         time.sleep(3.5)
-        # doFbSubs()
-        # doInstaLikes()
-        # doTwitter("Tweet")
+        doFbSubs()
+        doInstaLikes()
+        doTwitter("Tweet")
         doTwitter("Love")
         # doTwitter("Retwt")
         # doTwitterLikes()
