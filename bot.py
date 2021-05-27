@@ -31,7 +31,7 @@ def loadDriver():
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
     # Full screen display
-    # options.add_argument("start-maximized")
+    options.add_argument("start-maximized")
     # start chrome without showing the browser
     # options.add_argument('headless')
     # options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -300,7 +300,7 @@ def doTwitterTweet():
     # print("Set random to avoid twitter existing post warning ")
     try:
         span = driver.find_element_by_xpath(
-            "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[3]/div/div/div/div[1]/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div/div/div/div/div/span[2]/span")
+            "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[3]/div/div/div/div[1]/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[1]/div/div/label/div[1]/div/div/div/div/div/div/div/div/div/span[2]/span")
         driver.execute_script(
             "arguments[0].innerText = '"+str(randint(100, 900))+"'", span)
     except:
