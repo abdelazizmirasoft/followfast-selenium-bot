@@ -21,6 +21,9 @@ password = ""
 twitterUser = ""
 twitterPwd = ""
 
+fbUser = ""
+fbPwd = ""
+
 
 def loadDriver():
     options = webdriver.ChromeOptions()
@@ -60,6 +63,30 @@ def moveToTab(n):
     # Switch back to the main tab
     window_name = driver.window_handles[n]
     driver.switch_to.window(window_name=window_name)
+
+
+# Login to Facebook
+def loginFacebook():
+    global driver
+    print('Facebook')
+    # Open a new window
+    driver.execute_script("window.open('');")
+    moveToTab(1)
+    driver.get('https://www.facebook.com/')
+    time.sleep(5)
+    try:
+        # 1: Username
+        print('Username')
+        driver.find_element_by_name("email").send_keys(fbUser)
+        # 2: Password
+        print('Password')
+        driver.find_element_by_name("pass").send_keys(fbPwd)
+        # 3: Submit button
+        driver.find_element_by_name("login").click()
+        time.sleep(randint(5, 10))
+    except:
+        """ Twitter not loaded or already logged in!"""
+    closeTabs(1)
 
 
 # Login to Twitter
@@ -110,6 +137,8 @@ def login(driver):
     loginFollowfast()
     # MUST: Login to twitter
     loginTwitter()
+    # MUST: Login to facebook
+    loginFacebook()
 
 
 # Get points from Fb subscribtions
@@ -132,6 +161,32 @@ def doFbSubs():
             print("No Follow button found")
             foundButton = False
     time.sleep(randint(5, 10))
+
+# Get points from Fb posts
+
+
+def doFbPost():
+    global driver
+    driver.get('https://followfast.com/fbsite.php')
+    foundButton = True
+    index = 0
+    while foundButton and index < 20:
+        try:
+            element = driver.find_element_by_css_selector(
+                "div.likebox0")
+            attributeValue = element.get_attribute("style")
+            if "50.jpg" in attributeValue:
+                driver.find_element_by_xpath("//input[@value='Share']").click()
+                time.sleep(randint(5, 10))
+                closeTabs(1)
+                time.sleep(randint(15, 25))
+                index += 1
+            else:
+                foundButton = False
+        except:
+            print("No Insta button found")
+            foundButton = False
+    time.sleep(randint(10, 20))
 
 
 def doInstaLikes():
@@ -296,6 +351,7 @@ def doTasks():
     for i in range(3):
         driver.refresh()
         time.sleep(3.5)
+        doFbPost()
         doFbSubs()
         doInstaLikes()
         doTwitter("Tweet")
