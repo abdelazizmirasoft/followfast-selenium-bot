@@ -22,7 +22,7 @@ twitterUser = ""
 twitterPwd = ""
 
 fbUser = ""
-fbPwd = ""
+fbPwd = "**"
 
 
 def loadDriver():
@@ -30,6 +30,7 @@ def loadDriver():
     # To ignore the check of the SSL Certificate
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
+
     # Full screen display
     options.add_argument("start-maximized")
     # start chrome without showing the browser
@@ -199,7 +200,7 @@ def doInstaLikes():
             element = driver.find_element_by_css_selector(
                 "div.likebox0")
             attributeValue = element.get_attribute("style")
-            if "img/xlike-50" in attributeValue:
+            if "like-50" in attributeValue:
                 driver.find_element_by_xpath("//input[@value='Like']").click()
                 time.sleep(randint(5, 10))
                 closeTabs(1)
